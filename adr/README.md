@@ -53,3 +53,15 @@ What gets easier, what gets harder, what we now have to keep true.
 | [0014](./0014-identity-and-roles.md) | Every command carries a principal; roles are minimal; not multi-tenant | proposed |
 | [0015](./0015-git-sources-and-drafts.md) | Git-based sources using the user's own git; local-git drafts; immutable published versions | proposed |
 | [0016](./0016-ui-stack-and-hand-written-sdk.md) | React, Vite and Tailwind for the UI, and a small hand-written SDK | accepted |
+| [0017](./0017-coordinate-wrapper-agents-do-not-reimplement.md) | Krama coordinates A2A wrapper agents; it does not reimplement them | accepted |
+| [0018](./0018-use-case-neutral-platform.md) | Krama is use-case neutral: packs carry the use cases and any agent can take any role | accepted |
+| [0019](./0019-agent-catalogue-and-packs-are-two-layers.md) | Agents and packs are two layers: reusable agent definitions, and packs that wire them | accepted |
+| [0020](./0020-external-a2a-agents-as-pack-members.md) | Remote third-party A2A agents can be members of a pack | proposed |
+| [0021](./0021-self-hosted-and-compliance-oriented.md) | Self-hosted by organisations, compliance-oriented, not a hosted service | accepted |
+| [0022](./0022-studio-authors-agents-and-packs-in-git.md) | The Studio authors agents and packs in the UI and stores them in git | proposed |
+| [0023](./0023-spec-driven-development-with-adrs-and-evidence.md) | Spec-driven development: specs, ADRs, a status file and recorded evidence | accepted |
+| [0024](./0024-project-basics.md) | TypeScript, pnpm with Turborepo, changesets, Apache-2.0 with DCO, and the names | accepted |
+| [0025](./0025-http-layer-fastify-and-zod-contract.md) | Fastify with zod schemas from the shared contract for the HTTP API | proposed |
+| [0026](./0026-a2a-client-v0-3-behind-the-gateway.md) | A2A 0.3 client now, behind the gateway port, with 1.0 later | accepted |
+| [0027](./0027-prefixed-ulid-identifiers.md) | Identifiers are prefixed ULIDs | accepted |
+| [0028](./0028-opentelemetry-genai-conventions-for-usage.md) | Usage uses OpenTelemetry generative-AI naming where applicable | proposed |
