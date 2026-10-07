@@ -47,4 +47,4 @@ Everything said and done in a run is now written to the run's chain before it is
 
 **Findings** are written when a run closes: an agent that was meant to report to the sink, was seen working and never did; a start with no end; records that could not be written. An event that cannot be attributed to a run goes to the control chain with what it said. A run then ends with a summary record. If a record cannot be written the run carries on, the failure is counted and reported, and a stricter mode that stops the run is available.
 
-**Not yet covered:** the same event delivered on two channels is recorded twice (the wrapper does not put its event id on the A2A copy); control records of who did what (identity is a later task); retention and export; a crash can lose writes that were still queued.
+**Not yet covered:** an event the wrapper delivered on two channels would be recorded twice (it sends each event on one channel only today, and its A2A copy has no event id); control records of who did what (identity is a later task); retention and export; a crash can lose writes that were still queued.
