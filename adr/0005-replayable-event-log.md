@@ -17,3 +17,10 @@ Every state change and activity item is an `EventEnvelope` in a persisted log wi
 - Live views and recovery use one mechanism and are testable without a browser.
 - Retention bounds growth, so the log is a **feed**, not an audit trail (see ADR-0013).
 - Clients must implement resume and resnapshot; the SDK does this once for everyone.
+
+## Update (2026-10-07): how the server serves it
+
+- A stream is `GET /events` (or `GET /runs/{id}/events` for one run). It replays what a reconnecting client missed and then follows live, with no gap and no repeat between the two. With `Accept: application/json` or `?after=` the same route returns one page of events.
+- A browser stream cannot send the `Authorization` header, so a caller with the bearer token asks `POST /events/tickets` for a ticket that works once, for 60 seconds, on a stream route only.
+- A slow reader that falls far behind is disconnected and replays from its last id when it reconnects; the number of open streams is capped; all streams end when the server shuts down.
+
