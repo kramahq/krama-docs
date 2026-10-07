@@ -17,3 +17,7 @@ Both channels are mapped by one normaliser into one internal signal shape and go
 - Downstream code sees one shape whichever channel carried the event.
 - Loopback only: remote agents would need an authenticated remote ingest.
 - The normaliser currently **clips** long text and raw payloads, which suits the activity feed but not audit (ADR-0013).
+
+## Update (2026-10-07): the full signal is recorded before the shortened one is shown
+
+The normaliser still shortens long text and raw payloads for the activity feed, as intended. The same signal is now also written, in full, to the run's transcript (ADR-0013) **before** the activity event is published, so nothing is shown that is not already on record. Both channels use the sender's own event id to avoid recording a retried delivery twice, and that holds across a restart. The wrapper's A2A trace artifact does not carry that id, so the same event delivered on both channels at once could not be matched; Krama uses one channel per agent, and a request to the wrapper to include the id is open.

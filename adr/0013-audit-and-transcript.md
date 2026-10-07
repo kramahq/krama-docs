@@ -39,3 +39,12 @@ The embedded database runs one query at a time, so audit writes at full speed sl
 
 **What this does not give.** Triggers stop the application and ordinary users but not someone who can switch them off, which `verify` then detects. A tail removed together with the stored head is only detected against a head kept somewhere else (the control chain, an export manifest); sealing a run's final hash into the control chain is the next step. Writes are not yet grouped into one commit, which is the next lever if the embedded database ever limits throughput. Retention, deletion and export are not built yet.
 
+## Update (2026-10-07): capture is built (M3.5)
+
+Everything said and done in a run is now written to the run's chain before it is shown: the person's request, the orchestrator's tool calls and their results, decisions asked and answered, each delegation, every agent signal from the A2A stream and the HTTP sink (text and raw payload in full), and every request and frame the gateway sees. Writes to one run keep their order; the gateway side does not wait for the write, so a stream is not slowed.
+
+**Secrets** are masked before hashing: values the platform knows (secrets it passes to agents, the tokens it issues) and credential-shaped strings (bearer tokens, API keys, private keys). A record says that it was masked and by which rules. Masking is not reversible, and a secret in a form the rules do not know is not caught.
+
+**Findings** are written when a run closes: an agent that was meant to report to the sink, was seen working and never did; a start with no end; records that could not be written. An event that cannot be attributed to a run goes to the control chain with what it said. A run then ends with a summary record. If a record cannot be written the run carries on, the failure is counted and reported, and a stricter mode that stops the run is available.
+
+**Not yet covered:** the same event delivered on two channels is recorded twice (the wrapper does not put its event id on the A2A copy); control records of who did what (identity is a later task); retention and export; a crash can lose writes that were still queued.
