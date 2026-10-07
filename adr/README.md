@@ -6,7 +6,7 @@ An ADR records one decision: the situation that forced it, what we chose, and wh
 
 - **One decision per record.** Number them in order; never reuse a number.
 - **Write one when a task makes a real choice** between options, changes an earlier decision, or when a spike produces numbers that justify one. Do it in the same change as the code.
-- **Status:** `proposed` (agreed in principle, not built), `accepted` (built or in force), `superseded by ADR-NNNN`, or `rejected`. Change the status when the work lands.
+- **Status:** `proposed` (direction agreed, details still open or to be confirmed by the task that builds it), `accepted` (decided and in force for new work; the `Tasks:` line and the plan say whether it is built yet), `superseded by ADR-NNNN`, or `rejected`. Change the status when the work lands.
 - **Records are not rewritten.** If a decision changes, add a new ADR that supersedes it and mark the old one. Small corrections (typos, links, a later fact in Consequences) are fine and should be dated.
 - **Link the work.** `Tasks:` lists the plan task IDs; the pull request that lands the decision links the ADR.
 - **Public text only.** An ADR states what and why in terms a user or contributor can read; it does not copy private planning material.
@@ -62,6 +62,8 @@ What gets easier, what gets harder, what we now have to keep true.
 | [0023](./0023-spec-driven-development-with-adrs-and-evidence.md) | Spec-driven development: specs, ADRs, a status file and recorded evidence | accepted |
 | [0024](./0024-project-basics.md) | TypeScript, pnpm with Turborepo, changesets, Apache-2.0 with DCO, and the names | accepted |
 | [0025](./0025-http-layer-fastify-and-zod-contract.md) | Fastify with zod schemas from the shared contract for the HTTP API | proposed |
-| [0026](./0026-a2a-client-v0-3-behind-the-gateway.md) | A2A 0.3 client now, behind the gateway port, with 1.0 later | accepted |
+| [0026](./0026-a2a-client-v0-3-behind-the-gateway.md) | A2A 0.3 client now, behind the gateway port, with 1.0 later | superseded by ADR-0029 |
 | [0027](./0027-prefixed-ulid-identifiers.md) | Identifiers are prefixed ULIDs | accepted |
 | [0028](./0028-opentelemetry-genai-conventions-for-usage.md) | Usage uses OpenTelemetry generative-AI naming where applicable | proposed |
+| [0029](./0029-a2a-v1-native-through-the-official-sdk.md) | Speak A2A v1.0 natively through the official SDK; 0.3 only for older agents | accepted |
+| [0030](./0030-durable-a2a-conversation-and-human-in-the-loop.md) | Durable A2A conversations and human-in-the-loop handling | proposed |
