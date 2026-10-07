@@ -17,3 +17,25 @@ Two append-only, hash-chained records behind an `AuditLog` port. The **transcrip
 - Lossless capture costs storage; retention, legal hold and deletion tombstones manage it.
 - The activity feed remains a clipped view that links to the full record.
 - Open points are listed in the spec and will be settled as the tasks land.
+
+## Update (2026-10-07): the storage decision, from a spike (M2.5)
+
+**What was built.** A hash-chained, append-only ledger: each record carries the hash of the one before and its own hash over a canonical form of every other field, with a gapless position within its chain (one chain per run, one for control). Writers to one chain take turns on a lock on the chain's head row; writers to different chains do not meet. A record with a sender event id already in the chain is not written again. Triggers refuse `UPDATE`, `DELETE` and `TRUNCATE` on the records and let a chain's head move only forward. Each record is stored as the exact text that was hashed (not as `jsonb`, which reorders keys and rewrites numbers). `verify` finds a record whose content changed, a record that was removed or moved, a tail that was cut off, and a missing or altered blob. The same shared test suite passes on the embedded database and on PostgreSQL.
+
+**Where it lives.** The default is **the main database**, with a configuration switch to keep the audit record in **a separate embedded database**. A development-machine spike measured appends of 0.3 to 8 KB payloads (random text, a worst case for size):
+
+| | Embedded (PGlite) | PostgreSQL 16 |
+|---|---|---|
+| Appends per second, one chain | about 250 | about 240 to 360 |
+| Appends per second, 4 and 8 chains at once | about 300 (no gain; one query at a time) | about 950 and 1,200 |
+| Event-log append, alone / with audit writes in the same database / in a separate one (median) | 1 ms / 14 ms / 1.6 ms | 1.3 ms / 1.3 ms / 1.2 ms |
+| Verification | 12,000 to 48,000 records per second | 19,000 to 54,000 records per second |
+
+The embedded database runs one query at a time, so audit writes at full speed slow everything else on it; a separate database removes that. On PostgreSQL there was no measurable interference. Real load is far below these limits (tens of records per second), so the default stays simple (one database to back up) and the switch is there for heavy use.
+
+**Size.** About 1 KB per record on top of the payload (the record, its hashes and four indexes): a 300 byte payload is about 1.3 KB, 2 KB is about 3.3 KB.
+
+**Inline or blob.** Up to about 16 to 64 KB, writing the body inline and writing it as a file plus a reference cost the same (about 3 to 6 ms). Beyond that inline gets slow and bulky (15 ms at 256 KB, 47 ms at 1 MB, and the table grows by the body size) while a blob stays at about 5 ms and 1 KB. Bodies up to **16 KiB** are kept inline; larger ones are stored by their content hash on disk.
+
+**What this does not give.** Triggers stop the application and ordinary users but not someone who can switch them off, which `verify` then detects. A tail removed together with the stored head is only detected against a head kept somewhere else (the control chain, an export manifest); sealing a run's final hash into the control chain is the next step. Writes are not yet grouped into one commit, which is the next lever if the embedded database ever limits throughput. Retention, deletion and export are not built yet.
+
