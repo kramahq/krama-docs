@@ -20,3 +20,13 @@ Agents are remote processes that can fail, stream, stop to ask a question, or as
 - More machinery than an in-memory call: a command store, a worker or sweep, and decision revisions.
 - The current `request_decision` model has no immutable proposed action, so it must change (M4.10).
 - Push callbacks are optional; Krama starts its own agents, so subscription plus reconciliation may be enough.
+
+## Implementation notes (M3.7, 2026-10-09)
+
+The conversation half is built; the human-in-the-loop half is still M4.10, so the status stays `proposed`.
+
+- **Where the send is recorded.** On the step (`a2a.messageId`, `a2a.delivery`), not in a separate command table. The step is written with `pending` before anything is sent, so a crash leaves a record that says the message may have left. A restart reads `pending` (or a missing task id) as *uncertain* and never sends it again. This removes the need for an outbox and a worker for now; a separate command store can come with M4.10 if decisions need it.
+- **Before or after.** The gateway marks an error `dispatched: false` only when it failed before the request was made (reading the card, address and credential checks). Everything else, including an error that does not say, counts as possibly delivered. Only an unreachable address is retried with backoff, under the same `messageId`.
+- **After a dropped stream.** If the agent had already answered, the engine follows the task with `SubscribeToTask` (up to three times) and then reads it with `GetTask`. Artifacts the agent repeats are stored once (by name and content hash). A state event for a step that has already finished is ignored and noted on the transcript.
+- **After a restart.** `failOrphaned` asks the agent what it holds: a finished task is taken over, a running one is canceled (so it does not spend unattended) and the step is failed so a person can choose to retry it.
+- **Not built.** A periodic `GetTask` sweep of open tasks while the server runs (reconciliation happens after a drop and after a restart, not on a timer), `ListTasks` sweeps, and push callbacks.
