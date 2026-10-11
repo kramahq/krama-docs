@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-10-03
-- Tasks: M4.5, M4.8, M6.1
+- Tasks: M4.5, M4.8, M4.9, M6.1
 
 ## Context
 
@@ -17,3 +17,13 @@ A pack is one self-contained `krama-pack.yaml` that names **one orchestrator** a
 - Authoring a pack is mostly listing agents and describing how they relate.
 - The engine carries no methodology; process lives in prompts and hints.
 - The engine still reads the older methodology and roster until they are removed (M4.9).
+
+## Run controls confirmed — 2026-10-11
+
+Removing the methodology must preserve deterministic run controls. The agreed replacement is:
+
+- The orchestrator records its plan through `set_plan`. A run without an explicit plan uses one implicit phase.
+- The engine limits revision loops using platform policy.
+- Review mode requires a human decision before successful completion. Autopilot omits this final review; other required decisions still block progress.
+
+These are requirements for M4.9, which is not yet implemented. The current UI must describe existing pack reviews and requested decisions accurately until the engine enforces the final review rule. A configured backend or budget is not evidence that an agent was launched or that a native worker call passed a pre-dispatch check.
