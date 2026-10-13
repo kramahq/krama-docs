@@ -21,3 +21,7 @@ Both channels are mapped by one normaliser into one internal signal shape and go
 ## Update (2026-10-07): the full signal is recorded before the shortened one is shown
 
 The normaliser still shortens long text and raw payloads for the activity feed, as intended. The same signal is now also written, in full, to the run's transcript (ADR-0013) **before** the activity event is published, so nothing is shown that is not already on record. Both channels use the sender's own event id to avoid recording a retried delivery twice, and that holds across a restart. The wrapper sends each event on one channel only (the A2A stream or the HTTP endpoint), so an event is not delivered twice. Its A2A copy carries no event id; if the wrapper ever emits on both channels, the id will be needed to recognise them as one.
+
+## Runtime limitation (2026-10-11)
+
+Copilot `1.8.3-canary-20261011154949` delivered real worker file-tool events to the authenticated HTTP sink during native delegation, but did not deliver lifecycle or usage. The same worker reported tokens/calls/credits through terminal A2A `x-usage` on a direct call; currency cost was `null`. Its usage publishing bypasses the selected HTTP event emitter ([wrapper #56](https://github.com/shashikanth-gs/a2a-wrapper/issues/56)). The normaliser cannot account for usage it never receives. Until this is fixed, native Copilot activity can be visible while its usage remains unreported; an empty usage ledger is not evidence of zero usage or cost.
