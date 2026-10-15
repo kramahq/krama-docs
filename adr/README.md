@@ -69,3 +69,5 @@ What gets easier, what gets harder, what we now have to keep true.
 | [0030](./0030-durable-a2a-conversation-and-human-in-the-loop.md) | Durable A2A conversations and human-in-the-loop handling | proposed |
 
 Runtime notes dated 2026-10-11 in ADR-0008 and ADR-0010 record successful native Codex/Copilot dispatch and polling, plus the remaining governance approval, HTTP usage and worker-session limitations. Their accepted decisions remain in force.
+
+The implementation note dated 2026-10-16 in [ADR-0019](./0019-agent-catalogue-and-packs-are-two-layers.md) records Git-installed agent registration, version history, consent and runtime configuration.
